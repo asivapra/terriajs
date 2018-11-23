@@ -19,6 +19,7 @@ import ProgressBar from '../Map/ProgressBar.jsx';
 import SidePanel from './../SidePanel/SidePanel.jsx';
 import processCustomElements from './processCustomElements';
 import FullScreenButton from './../SidePanel/FullScreenButton.jsx';
+import StoryPanel from './../StoryPanel.jsx';
 import { Small, Medium } from '../Generic/Responsive';
 import classNames from 'classnames';
 import 'inobounce';
@@ -103,135 +104,138 @@ const StandardUserInterface = createReactClass({
         const terria = this.props.terria;
         const allBaseMaps = this.props.allBaseMaps;
         return (
-            <div className={Styles.uiRoot} ref={w => (this._wrapper = w)}>
-                <div className={Styles.ui}>
-                    <div className={Styles.uiInner}>
-                        <If condition={!this.props.viewState.hideMapUi()}>
-                            <Small>
-                                <MobileHeader
-                                    terria={terria}
-                                    menuItems={customElements.menu}
-                                    viewState={this.props.viewState}
-                                    version={this.props.version}
-                                    allBaseMaps={allBaseMaps}
-                                />
-                            </Small>
+            <div className={Styles.storyWrapper}>
+                <div className={Styles.uiRoot} ref={w => (this._wrapper = w)}>
+                    <div className={Styles.ui}>
+                        <div className={Styles.uiInner}>
+                            <If condition={!this.props.viewState.hideMapUi()}>
+                                <Small>
+                                    <MobileHeader
+                                        terria={terria}
+                                        menuItems={customElements.menu}
+                                        viewState={this.props.viewState}
+                                        version={this.props.version}
+                                        allBaseMaps={allBaseMaps}
+                                    />
+                                </Small>
+                                <Medium>
+                                    <div
+                                        className={classNames(Styles.sidePanel, {
+                                            [Styles.sidePanelHide]: this.props
+                                                .viewState.isMapFullScreen
+                                        })}
+                                    >
+                                        <Branding
+                                            terria={terria}
+                                            version={this.props.version}
+                                        />
+                                        <SidePanel
+                                            terria={terria}
+                                            viewState={this.props.viewState}
+                                        />
+                                    </div>
+                                </Medium>
+                            </If>
                             <Medium>
                                 <div
-                                    className={classNames(Styles.sidePanel, {
-                                        [Styles.sidePanelHide]: this.props
-                                            .viewState.isMapFullScreen
-                                    })}
+                                    className={classNames(
+                                        Styles.showWorkbenchButton,
+                                        {
+                                            [Styles.showWorkbenchButtonisVisible]: this
+                                                .props.viewState.isMapFullScreen,
+                                            [Styles.showWorkbenchButtonisNotVisible]: !this
+                                                .props.viewState.isMapFullScreen
+                                        }
+                                    )}
                                 >
-                                    <Branding
-                                        terria={terria}
-                                        version={this.props.version}
-                                    />
-                                    <SidePanel
-                                        terria={terria}
+                                    <FullScreenButton
+                                        terria={this.props.terria}
                                         viewState={this.props.viewState}
+                                        minified={false}
+                                        btnText='Show workbench'
+                                        animationDuration={250}
                                     />
                                 </div>
                             </Medium>
-                        </If>
-                        <Medium>
-                            <div
-                                className={classNames(
-                                    Styles.showWorkbenchButton,
-                                    {
-                                        [Styles.showWorkbenchButtonisVisible]: this
-                                            .props.viewState.isMapFullScreen,
-                                        [Styles.showWorkbenchButtonisNotVisible]: !this
-                                            .props.viewState.isMapFullScreen
-                                    }
-                                )}
-                            >
-                                <FullScreenButton
-                                    terria={this.props.terria}
-                                    viewState={this.props.viewState}
-                                    minified={false}
-                                    btnText='Show workbench'
-                                    animationDuration={250}
-                                />
-                            </div>
-                        </Medium>
 
-                        <section className={Styles.map}>
-                            <ProgressBar terria={terria} />
-                            <MapColumn
-                                terria={terria}
-                                viewState={this.props.viewState}
-                            />
-                            <main>
-                                <ExplorerWindow
+                            <section className={Styles.map}>
+                                <ProgressBar terria={terria} />
+                                <MapColumn
                                     terria={terria}
                                     viewState={this.props.viewState}
                                 />
-                                <If
-                                    condition={
-                                        this.props.terria.configParameters
-                                            .experimentalFeatures &&
-                                        !this.props.viewState.hideMapUi()
-                                    }
-                                >
-                                    <ExperimentalFeatures
+                                <main>
+                                    <ExplorerWindow
                                         terria={terria}
                                         viewState={this.props.viewState}
-                                        experimentalItems={
-                                            customElements.experimentalMenu
-                                        }
                                     />
-                                </If>
-                            </main>
-                        </section>
+                                    <If
+                                        condition={
+                                            this.props.terria.configParameters
+                                                .experimentalFeatures &&
+                                            !this.props.viewState.hideMapUi()
+                                        }
+                                    >
+                                        <ExperimentalFeatures
+                                            terria={terria}
+                                            viewState={this.props.viewState}
+                                            experimentalItems={
+                                                customElements.experimentalMenu
+                                            }
+                                        />
+                                    </If>
+                                </main>
+                            </section>
+                        </div>
                     </div>
-                </div>
 
-                <If condition={!this.props.viewState.hideMapUi()}>
-                    <div
-                        className={classNames({
-                            [Styles.explorerPanelIsVisible]: this.props
-                                .viewState.explorerPanelIsVisible
-                        })}
-                    >
-                        <MenuBar
-                            terria={terria}
-                            viewState={this.props.viewState}
-                            allBaseMaps={allBaseMaps}
-                            menuItems={customElements.menu}
-                        />
-                        <MapNavigation terria={terria}
-                                       viewState={this.props.viewState}
-                                       navItems={customElements.nav}
+                    <If condition={!this.props.viewState.hideMapUi()}>
+                        <div
+                            className={classNames({
+                                [Styles.explorerPanelIsVisible]: this.props
+                                    .viewState.explorerPanelIsVisible
+                            })}
+                        >
+                            <MenuBar
+                                terria={terria}
+                                viewState={this.props.viewState}
+                                allBaseMaps={allBaseMaps}
+                                menuItems={customElements.menu}
+                            />
+                            <MapNavigation terria={terria}
+                                        viewState={this.props.viewState}
+                                        navItems={customElements.nav}
+                            />
+                        </div>
+                    </If>
+
+                    <Notification viewState={this.props.viewState}/>
+                    <MapInteractionWindow terria={terria} viewState={this.props.viewState}/>
+
+                    <If condition={customElements.feedback && this.props.terria.configParameters.feedbackUrl && !this.props.viewState.hideMapUi()}>
+                    <For each="feedbackItem" of={customElements.feedback} index="i">
+                        <div key={i}>
+                            {feedbackItem}
+                        </div>
+                    </For>
+                    </If>
+
+                    <If condition={!customElements.feedback && this.props.terria.configParameters.feedbackUrl && !this.props.viewState.hideMapUi()}>
+                        <aside className={Styles.feedback}>
+                            <FeedbackForm viewState={this.props.viewState}/>
+                        </aside>
+                    </If>
+
+                    <div className={Styles.featureInfo}>
+                        <FeatureInfoPanel terria={terria}
+                                    viewState={this.props.viewState}
                         />
                     </div>
-                </If>
-
-                <Notification viewState={this.props.viewState}/>
-                <MapInteractionWindow terria={terria} viewState={this.props.viewState}/>
-
-                <If condition={customElements.feedback && this.props.terria.configParameters.feedbackUrl && !this.props.viewState.hideMapUi()}>
-                  <For each="feedbackItem" of={customElements.feedback} index="i">
-                      <div key={i}>
-                          {feedbackItem}
-                      </div>
-                  </For>
-                </If>
-
-                <If condition={!customElements.feedback && this.props.terria.configParameters.feedbackUrl && !this.props.viewState.hideMapUi()}>
-                    <aside className={Styles.feedback}>
-                        <FeedbackForm viewState={this.props.viewState}/>
-                    </aside>
-                </If>
-
-                <div className={Styles.featureInfo}>
-                    <FeatureInfoPanel terria={terria}
-                                  viewState={this.props.viewState}
+                    <DragDropFile terria={this.props.terria}
+                                viewState={this.props.viewState}
                     />
                 </div>
-                <DragDropFile terria={this.props.terria}
-                              viewState={this.props.viewState}
-                />
+                <StoryPanel terria={terria}/>
             </div>
         );
     }
